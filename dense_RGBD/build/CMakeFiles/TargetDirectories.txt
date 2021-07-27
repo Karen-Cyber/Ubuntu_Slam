@@ -1,0 +1,3 @@
+/home/karenfu/VisualSlam_Study/Projects/dense_RGBD/build/CMakeFiles/rebuild_cache.dir
+/home/karenfu/VisualSlam_Study/Projects/dense_RGBD/build/CMakeFiles/edit_cache.dir
+/home/karenfu/VisualSlam_Study/Projects/dense_RGBD/build/CMakeFiles/pointcloud_mapping.dir
