@@ -28,6 +28,8 @@ void feature_detect_match(
 void cvR_eiR(const cv::Mat& cvR, Eigen::Matrix3d& eiR);
 void cvt_eit(const cv::Mat& cvt, Eigen::Vector3d& eit);
 
+void transform_record(const cv::Mat& cvR, const cv::Mat& cvt, ofstream& fout);
+
 int main(int argc, char** argv)
 {
     if (argc != 2)
@@ -36,7 +38,8 @@ int main(int argc, char** argv)
         return -1;
     }
     string filePath = argv[1];
-    ofstream fout("trajectory.txt");
+    ofstream write_trajectory("trajectory.txt");
+    ofstream write_transformt("transformt.txt");
 
     // OpenCV prepare
     vector<cv::KeyPoint> keypoints_1;
@@ -72,10 +75,11 @@ int main(int argc, char** argv)
         eiv = T * eiv;
         cout << "Transformation:\n" << T.matrix() << endl;
         cout << "Current position:\n" << eiv << endl;
-        fout << eiv.transpose() << endl;
+        write_trajectory << eiv.transpose() << endl;
+        write_transformt << T.matrix() << endl;
     }
 
-    fout.close();
+    write_trajectory.close();
     return 0;
 }
 
@@ -148,4 +152,13 @@ void cvR_eiR(const cv::Mat& cvR, Eigen::Matrix3d& eiR)
 void cvt_eit(const cv::Mat& cvt, Eigen::Vector3d& eit)
 {
     eit <<  cvt.at<double>(0, 0), cvt.at<double>(0, 1), cvt.at<double>(0, 2);
+}
+
+void transform_record(const cv::Mat& cvR, const cv::Mat& cvt, ofstream& fout)
+{
+    Eigen::Matrix3d eiR;
+    cvR_eiR(cvR, eiR);
+    Eigen::Quaterniond eiQ(eiR);
+    fout << eiQ.coeffs().transpose() << ' ';
+    fout << cvt.at<double>(0, 0) << ' ' << cvt.at<double>(0, 1) << ' ' << cvt.at<double>(0, 2) << endl;
 }
