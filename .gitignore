@@ -35,5 +35,5 @@
 build
 bin
 .vscode
-.png
-.jpg
+*.png
+*.jpg
