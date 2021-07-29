@@ -37,3 +37,4 @@ bin
 .vscode
 *.png
 *.jpg
+camera_intrinsics/bin/intrinsics.yml
