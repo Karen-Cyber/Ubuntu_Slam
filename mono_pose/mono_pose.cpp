@@ -62,7 +62,7 @@ int main(int argc, char** argv)
     Eigen::Vector3d eiv(0, 0, 0);
     Eigen::Isometry3d T = Eigen::Isometry3d::Identity();
 
-    for (int i = 1; i < 7; ++i)
+    for (int i = 1; i < 8; ++i)
     {
         img1 = cv::imread(filePath + "/" + to_string(i)     + ".jpg", CV_LOAD_IMAGE_COLOR);
         img2 = cv::imread(filePath + "/" + to_string(i + 1) + ".jpg", CV_LOAD_IMAGE_COLOR);
