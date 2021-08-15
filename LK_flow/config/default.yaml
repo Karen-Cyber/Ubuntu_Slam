@@ -1,0 +1,19 @@
+%YAML:1.0
+# camera device num
+device_num: 2
+# resolution: use as follow
+#   VideoCapture cap(device);
+#   cap.set(CV_CAP_PROP_FRAME_WIDTH,1280);
+#   cap.set(CV_CAP_PROP_FRAME_HEIGHT,480);
+frame_width: 1280
+frame_height: 480
+# camera intrinsics (cm)
+camera_fx: 507.9
+camera_fy: 483.0
+camera_cx: 331.3
+camera_cy: 244.9
+base_line: 5.62
+
+num_features: 100
+num_features_init: 40
+num_features_tracking: 40

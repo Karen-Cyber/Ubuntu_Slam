@@ -44,3 +44,28 @@ pthread_detach(pthread_self())
 	完成了对SLAM系统的config和camera类的模仿解析，写成了适应实时摄像的实现，进一步理解了高翔博士SLAM系统中camera类pose_的意义，因为使用的是双目摄像头(获取立体图像)，那么记录图像中的特征点要还原深度时就不能以单个摄像头的位姿还原，而是要将还原的起点先转换到双目摄像机中心，再将每一帧中的二维特征点坐标投射到世界坐标中。
 	学习了gtest测试框架，开始上手了，发现做一个大工程之前对每一个模块进行测试非常有必要，这样能减少最终运行时debug的可能。
 	目前还没有涉及到多线程，在之前的学习中已经试过多线程分别运行视里程记和位姿显示，因此打算将高翔博士的SLAM系统从双线程改写为三线程，可视化模块单独有一个线程实时运行，后端优化线程基本保持和高翔博士的SLAM系统一样，受到激活才运行。
+----------------------------------------------------------------------------
+2021/08/15:
+	解决了两个奇怪的BUG，第一个是因为摄像头的USB线没有插稳，testcase总是过不了或者给出很奇怪的图像。第二个是由于OpenCV的相关知识不完备导致的。在我模仿高翔博士SLAM系统设计的过程中，我也设计了前端拥有单独的左右摄像机指针，然而，我忽略了一个问题，高翔博士的SLAM系统立体摄像机很可能是由两个单独的单目摄像头组成的，我的双目摄像头是自带集成芯片将两张图像合成输出的，通过简单的测试结果发现了OpenCV所在线程对摄像头等IO设备的控制权问题，如果在同一个线程中你尝试这样写：
+	cv::VideoCapture caps[5];
+    for (int i = 0; i < 5; ++i)
+    {
+        caps[i].open(2);
+    }
+那么就会报以下错误：
+	[ WARN:0] VIDEOIO(V4L2:/dev/video2): can't open camera by index
+	[ WARN:0] VIDEOIO(V4L2:/dev/video2): can't open camera by index
+	[ WARN:0] VIDEOIO(V4L2:/dev/video2): can't open camera by index
+	[ WARN:0] VIDEOIO(V4L2:/dev/video2): can't open camera by index
+可以得出结论，同一个线程OpenCV只能拥有一个IO设备的一个指针。那这样的话我的camera类和frontend类可能需要大改了。
+	同时再做一个备忘录，后面开始写map类后，frame一定要使用cv::Mat.clone()，不然很多过去帧的信息都会被覆写而丢失。
+	弄懂了高翔博士SLAM系统中Frontend类的DtectFeatures函数，一开始疑惑这个函数是因为，使用gftt检测算法之前，创建了图像的掩码，把特征点所在的区域的方格十个像素内区域标记为不检测区域，这就很奇怪，为什么要把图像已经检测到的特征点屏蔽掉。后来看到下面一段代码：
+	std::vector<cv::KeyPoint> keypoints;
+    gftt_->detect(current_frame_->left_img_, keypoints, mask);
+    int cnt_detected = 0;
+    for (auto &kp : keypoints) {
+        current_frame_->features_left_.push_back(
+            Feature::Ptr(new Feature(current_frame_, kp)));
+        cnt_detected++;
+    }
+也就是说如果不屏蔽之前存在的特征点，那么
