@@ -20,6 +20,7 @@ Config::~Config()
 {
     if (file_.isOpened())
         file_.release();
+    config_ = nullptr;
 }
 
 std::shared_ptr<Config> Config::config_ = nullptr;

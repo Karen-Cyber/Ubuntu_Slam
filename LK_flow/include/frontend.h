@@ -4,6 +4,7 @@
 #include "common.h"
 #include "camera.h"
 #include "frame.h"
+#include "viewer.h"
 
 class Frontend
 {
@@ -12,14 +13,22 @@ public:
 private:
     // status
     enum FrontendStatus {INITING, TRACKING_1, TRACKING_0, TRACKING_X};
-    FrontendStatus runStatus_ = INITING;
+    FrontendStatus status_ = INITING;
     // camera
-    Camera::Ptr camera_left_ = nullptr;
+    // Camera::Ptr camera_left_ = nullptr;
+    // viewer
+    Viewer::Ptr viewer_ = nullptr;
 
     // OpenCV utilities
     cv::Ptr<cv::GFTTDetector> gftt_;  // feature detector in opencv
-    cv::Mat error_;
-    std::vector<uchar> lkStatus_;
+
+    // other parameters
+    int num_features_ = 200;
+    int num_features_init_ = 100;
+    int num_features_tracking_ = 50;
+    int num_features_inlier_ = 20;
+    int num_featuers_needed_for_keyframe_ = 80;
+
 public:
     /**
      *  @brief 
@@ -31,33 +40,22 @@ public:
     Frame::Ptr frame_last_ = nullptr;
 
 public:
-    Frontend();
+    Frontend() {}
     Frontend(const std::string& configFilePath);
 
-    /**
-     * @brief new frame->current frame
-     *        last frame->current frame
-     * @param frame 
-     * @param flag 0: original img 1: gray scale img
-     */
-    bool initFrameCurr();
     bool setFrameCurr(const Frame::Ptr& frame);
-    void addFrameCurr();
-    /**
-     * @brief use cv::GFTTDetector to detect LK
-     *        features
-     */
+    void addFrameCurr(Frame::Ptr newFrame);
+    bool stereoInit();
+
     void LKTrack();
-    void detectFeatures(Frame::Ptr& frame);
-    /**
-     * @brief Set the Camera object
-     * 
-     * @param camLeft 
-     * @param camRigh 
-     * @return true 
-     * @return false 
-     */
+    int detectFeatures();
+    int findFeaturesInRight();
+
+    void closeViewer();
+
+
     bool setCamera(Camera::Ptr camLeft, Camera::Ptr camRigh);
+    bool setViewer(Viewer::Ptr viewer);
 };
 
 #endif

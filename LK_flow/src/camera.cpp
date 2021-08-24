@@ -8,7 +8,7 @@
  *         T_c_w means the transformation from world to camera
  */
 
-Camera::Camera(const std::string& configFilePath, int LorR)
+Camera::Camera(const std::string& configFilePath, int LorR, int video)
 {
     try
     {
@@ -39,6 +39,8 @@ Camera::Camera(const std::string& configFilePath, int LorR)
     deviceNum_ = dn;
     LorR_ = LorR;
 
+    video_ = video;
+
     /**
      *  according to the LorR flag to indicate 
      *  whether this is a left cam or right cam
@@ -50,6 +52,12 @@ Camera::Camera(const std::string& configFilePath, int LorR)
     poseInv_ = pose_.inverse();
 
     // camera initialization
+    
+    // do not open device if set to virtual
+    // virtual camera only has poses but not
+    // able to capture new frame
+    if (!video_)
+        return;
     try
     {
         cap_.open(deviceNum_);
@@ -64,10 +72,24 @@ Camera::Camera(const std::string& configFilePath, int LorR)
     cap_.set(CV_CAP_PROP_FRAME_HEIGHT, frameHei_);
 }
 
-void Camera::newFrame(Frame::Ptr& frame)
+void Camera::newFrame(Frame::Ptr frame)
 {
+    // if this is a virtual camera
+    if (!video_)
+        return;
+    if (!cap_.isOpened())
+    {
+        LOG(INFO) << "IN Camera::newFrame(Frame::Ptr):\n" << "Virtual camera does not provide new frame\n";
+        return;
+    }
     cv::Mat temp;
     cap_ >> temp;
+    if (frame == nullptr)
+    {
+        LOG(INFO) << "IN Camera::newFrame(Frame::Ptr):\n" << "nullpointer of frame\n";
+        return;
+    }
+        
     frame->imageLeft_ = temp(cv::Rect(0, 0, frameWid_ / 2, frameHei_)).clone();
     frame->imageRigh_ = temp(cv::Rect(frameWid_ / 2, 0, frameWid_ / 2, frameHei_)).clone();
 }

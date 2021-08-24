@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <list>
 #include <memory>
 #include <thread>
 #include <mutex>
@@ -25,5 +26,8 @@
 // Sophus
 #include <sophus/se3.hpp>
 #include <sophus/so3.hpp>
+
+// glog
+#include <glog/logging.h>
 
 #endif

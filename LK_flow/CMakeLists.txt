@@ -57,7 +57,9 @@ SET(THIRD_PARTY_LIBS
         )
 
 # app & src & test
+# notice the sequence of INCLUDE!
+# notice the sequence of SUBDIRECTORY!
 INCLUDE_DIRECTORIES(./include)
-ADD_SUBDIRECTORY(./app)
 ADD_SUBDIRECTORY(./src)
 ADD_SUBDIRECTORY(./test)
+ADD_SUBDIRECTORY(./app)

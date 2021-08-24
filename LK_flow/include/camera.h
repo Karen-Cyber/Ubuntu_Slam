@@ -25,6 +25,7 @@ private:
     int frameWid_;
     int frameHei_;
     int LorR_;
+    int video_;
 
     // stereo_singleton transform
     SE3 pose_;      // transform from stereo to singleton
@@ -34,13 +35,17 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
     typedef std::shared_ptr<Camera> Ptr;
 
-    Camera(const std::string& configFilePath, int LorR = 0);
+    Camera(const std::string& configFilePath, int LorR = 0, int video = 0);
 
-    ~Camera() {}
+    ~Camera() 
+    { 
+        cv::destroyAllWindows();
+        cap_.release();
+    }
 
     SE3 getPose() const { return pose_; }
 
-    void newFrame(Frame::Ptr& frame);
+    void newFrame(Frame::Ptr frame);
 
     // Transformation functions
     Vec3 world2camera(const Vec3 &p_w, const SE3 &T_c_w);

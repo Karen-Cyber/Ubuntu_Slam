@@ -8,8 +8,9 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    int device = 2;
+    int device = 0;
     VideoCapture cap(device);
+    // cap.open(device);
     cap.set(CV_CAP_PROP_FRAME_WIDTH,1280);
     cap.set(CV_CAP_PROP_FRAME_HEIGHT,480);
     Mat img_double;
