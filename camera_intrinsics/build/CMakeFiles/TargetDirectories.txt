@@ -1,3 +1,0 @@
-/home/karenfu/VisualSlam_Study/Projects/camera_intrinsics/build/CMakeFiles/rebuild_cache.dir
-/home/karenfu/VisualSlam_Study/Projects/camera_intrinsics/build/CMakeFiles/edit_cache.dir
-/home/karenfu/VisualSlam_Study/Projects/camera_intrinsics/build/CMakeFiles/calibration.dir
