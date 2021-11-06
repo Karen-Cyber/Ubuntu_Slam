@@ -11,7 +11,13 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    VideoCapture cap(stoi(argv[1]));
+    if (argc < 3)
+    {
+        cout << "usage: stereo_capture <output_directory_name> <device_num>\n";
+        return -1;
+    }
+
+    VideoCapture cap(stoi(argv[2]));
     if (!cap.isOpened())
     {
         cout << "ERROR::OPENNING::CAMERA\n";
@@ -24,7 +30,9 @@ int main(int argc, char** argv)
     Mat img_double;
     int n = 0;
     bool recording = false;
-    int interleave = 15; //ms
+    int interleave = 10; //ms
+
+    string dirName = argv[1];
 
     while (true)
     {
@@ -45,19 +53,20 @@ int main(int argc, char** argv)
             recording = false;
         if (waitKey(interleave) == 99)
         {
-            if (leftImage.data && rightImage.data)
+            if (leftGray.data && rightGray.data)
             {
-                imwrite("../images/left"  + fmt::format("{0:0>6}", n) + ".png", leftGray);
-                imwrite("../images/right" + fmt::format("{0:0>6}", n) + ".png", rightGray);
+                cv::imwrite("../images/left"  + fmt::format("{0:0>6}", n) + ".png",  leftGray);
+                cv::imwrite("../images/right" + fmt::format("{0:0>6}", n) + ".png", rightGray);
             }
             n++;
         }
         if (recording)
         {
-            if (leftImage.data && rightImage.data)
+            if (leftGray.data && rightGray.data)
             {
-                imwrite("../myDatasets/image_0/" + fmt::format("{0:0>6}", n) + ".png", leftGray);
-                imwrite("../myDatasets/image_1/" + fmt::format("{0:0>6}", n) + ".png", rightGray);
+                cout << "saving gray images\n";
+                cv::imwrite("../" + dirName + "/image_0/" + fmt::format("{0:0>6}", n) + ".png",  leftGray);
+                cv::imwrite("../" + dirName + "/image_1/" + fmt::format("{0:0>6}", n) + ".png", rightGray);
             }
             
             cv::putText(leftImage, 

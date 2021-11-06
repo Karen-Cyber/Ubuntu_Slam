@@ -2,7 +2,8 @@ SET(TEST_SOURCES
     stereo_calib
     stereo_capture
     mono_calib
-    fmt_test)
+    fmt_test
+    imwrite_test)
 
 FOREACH (test_src ${TEST_SOURCES})
     ADD_EXECUTABLE(${test_src} ${test_src}.cpp)
