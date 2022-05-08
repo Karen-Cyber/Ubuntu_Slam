@@ -1,0 +1,20 @@
+%YAML:1.0
+# dataset directory
+dataset_dir: /home/karen/workspace/CV_lab1/images/calib_images
+
+# camera intrinsics
+camera.fx: 3.0556046899380012e+03
+camera.fy: 3.0556046899380012e+03
+camera.cx: 1.9106976138108419e+03
+camera.cy: 1.5624986258910974e+03
+
+# other parameters
+scale_factor: 0.25
+metric: 58.4
+
+# images for compared
+image1: 0
+image2: 20
+
+# visualization settings
+point_size: 5
